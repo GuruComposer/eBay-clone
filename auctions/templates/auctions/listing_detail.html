@@ -1,0 +1,94 @@
+{% extends "auctions/layout.html" %}
+{% load humanize %}
+
+
+{% block title %}{{ listing.title|title }}{% endblock %}
+
+{% block body %}
+
+{% if listing.winner %}
+<h1 class="fc-g">{{ listing.winner }} won the auction!</h1>
+{% endif %}
+
+
+<h2>{{ listing.title|title}} </h2>
+{% if message %}
+<span class="error-message">{{ message }}</span>
+{% endif %}
+
+<div>
+    Number of bids: <strong>{{ listing.num_bids }}</strong>
+    <br>
+    {% if listing.num_bids == 0 %}
+    Current price: <strong>${{ listing.starting_price|intcomma }}</strong>
+    {% else %}
+    Current price: <strong>${{ listing.highest_bid }}</strong>
+    {% endif %}
+</div>
+
+<div>
+    <img src="{{ listing.image }}" style="width:20%;">
+</div>
+<div>
+    {{ listing.description }}
+</div>
+<br>
+<div>
+    <span>
+        {% if user.is_authenticated %}
+        <span>
+            {% if user != listing.owner %}
+            {% load crispy_forms_tags %}
+            {% crispy bid_form bid_form.helper %}
+            {% else %}
+            <small><i>This is your auction.</i></small>
+            {% endif %}
+        </span>
+        {% else %}
+        <small>Please login to place a bid.</small>
+        {% endif %}
+    </span>
+</div>
+
+<div>
+    {% if user.is_authenticated %}
+    <span>
+        {% if user != listing.owner %}
+        <p>
+            <form action="{% url 'toggle_watchlist' listing.id %}" method="post">
+                {% csrf_token %}
+                {% if in_watchlist %}
+                <input type="submit" value="REMOVE FROM WATCHLIST">
+                {% else %}
+                <input type="submit" value="ADD TO WATCHLIST">
+                {% endif %}
+            </form>
+        </p>
+        {% endif %}
+    </span>
+    <span>
+        {% if user == listing.owner and listing.active == True %}
+        <p>
+            <form action="{% url 'close_listing' listing.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="CLOSE AUCTION">
+            </form>
+        </p>
+        {% endif %}
+    </span>
+    <span>
+        {% load crispy_forms_tags %}
+        {% crispy comment_form comment_form.helper %}
+    </span>
+    {% endif %}
+    <div>
+        <strong>Comment Section:</strong>
+        <ul>
+            {% for comment in comments reversed %}
+            <li>{{ comment }} <small>{{ comment.time|naturaltime }}</small></li> 
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

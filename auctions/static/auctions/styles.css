@@ -1,0 +1,35 @@
+body {
+    padding: 1vw;
+    margin-left: 1vw;
+}
+
+.listing-image {
+    width: 20%;
+}
+
+.owned-text {
+    color: green;
+    float: right;
+}
+
+.card img {
+    width: auto;
+    height: 15vw;
+    padding: 20px 20px 0 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.error-message {
+    font-style: italic;
+    font-size: small;
+    color: red;
+}
+
+.fc-g {
+    color: green;
+}
+
+.fc-r {
+    color: red;
+}

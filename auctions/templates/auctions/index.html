@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+{% load humanize %}
+
+{% block body %}
+{% if page == 'active_listings' %}
+<h2>Active Listings</h2>
+{% elif page == 'watchlist' %}
+<h2>{{ user|title }}'s Watchlist</h2>
+{% elif page == 'category' %}
+<h2>{{ category|title }}</h2>
+{% endif %}
+<div class="card-columns">
+    {% for listing in listings %}
+    <div class="card">
+        <div class="owned-text">
+            {% if listing.owner == user %}
+            (your auction)
+            {% endif %}
+        </div>
+        <div>
+            {% if listing.active %}
+            <p class="fc-g">ACTIVE</p>
+            {% else %}
+            <p class="fc-r">INACTIVE</p>
+            {% endif %}
+        </div>
+        {% if listing.image %}
+        <img src="{{ listing.image }}" class="card-img-top">
+        {% endif %}
+        
+        <div class="card-body">
+            <h3><a href="{% url 'listing_detail' listing.id %}">{{ listing.title|title }}</a></h3>
+                {% if listing.num_bids == 0 %}
+                <h4>Starting Price: ${{listing.starting_price|floatformat:"0"|intcomma }}</h4>
+                {% else %}
+                <h4>Highest Bid: ${{ listing.highest_bid_price|floatformat:"0"|intcomma }}</h4>
+                {% endif %}
+            <p class="card-text">{{ listing.description|truncatechars:50 }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
